@@ -1,5 +1,7 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './App.css';
+
+import testImage from './picture/yuushou.png';
 
 const style = {
   border: '1px solid gray',
@@ -7,16 +9,37 @@ const style = {
 };
 
 function Canvas() {
-  //const [drawing, setDrawing] = useState(false);
+  const isFirstLoad = useRef(true);
   const drawing = useRef(false); //描画には直接関係しないのでuseRef
   const canvasRef = useRef();
   const [start, setStart] = useState([0, 0]);
-  //let start_x = 0; //これでも動く(create rect flexible時点で)が拡張性が悪い
-  //let start_y = 0;
   const [end, setEnd] = useState([0, 0]);
 
+  useEffect(() => {
+    if (isFirstLoad.current) {
+      isFirstLoad.current = false;
+      const backImage = new Image();
+      backImage.src = testImage;
+      console.log(backImage); //<img src="..." />が出力される
+      backImage.onload = () => {
+        //console.log(backImage);
+        console.log(backImage.naturalWidth, backImage.naturalHeight);
+        canvasRef.current.width = backImage.naturalWidth;
+        canvasRef.current.height = backImage.naturalHeight;
+        const ctx = getContext();
+        ctx.drawImage(
+          backImage,
+          0,
+          0,
+          canvasRef.current.width,
+          canvasRef.current.height
+        );
+      };
+    }
+    //console.log('moved useEffect');
+  });
+
   function getContext() {
-    //console.log(canvasRef.current);  //<canvas ... />が返ってくる
     return canvasRef.current.getContext('2d');
   }
 
@@ -24,8 +47,6 @@ function Canvas() {
     drawing.current = true;
     const ctx = getContext();
     setStart([x, y]);
-    //start_x = x;
-    //start_y = y;
   }
 
   function draw(x, y) {
@@ -40,7 +61,6 @@ function Canvas() {
 
   function endDrawing() {
     drawing.current = false;
-    //setDrawing(false);
   }
 
   return (
