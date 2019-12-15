@@ -10,10 +10,10 @@ function Canvas() {
   //const [drawing, setDrawing] = useState(false);
   const drawing = useRef(false); //描画には直接関係しないのでuseRef
   const canvasRef = useRef();
-  const [start_x, setX] = useState(0);
+  const [start, setStart] = useState([0, 0]);
   //let start_x = 0; //これでも動く(create rect flexible時点で)が拡張性が悪い
-  const [start_y, setY] = useState(0);
   //let start_y = 0;
+  const [end, setEnd] = useState([0, 0]);
 
   function getContext() {
     //console.log(canvasRef.current);  //<canvas ... />が返ってくる
@@ -23,9 +23,8 @@ function Canvas() {
   function startDrawing(x, y) {
     drawing.current = true;
     const ctx = getContext();
-    setX(x);
+    setStart([x, y]);
     //start_x = x;
-    setY(y);
     //start_y = y;
   }
 
@@ -35,7 +34,8 @@ function Canvas() {
     }
     const ctx = getContext();
     ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
-    ctx.strokeRect(start_x, start_y, x - start_x, y - start_y);
+    setEnd([x - start[0], y - start[1]]); //w, hを設定している
+    ctx.strokeRect(start[0], start[1], end[0], end[1]);
   }
 
   function endDrawing() {
@@ -60,17 +60,19 @@ function Canvas() {
   );
 }
 
+/*
 function Button() {
   const [c, setC] = useState(0);
 
   return <button onClick={() => setC(c + 1)}>{c}</button>;
 }
+*/
 
 function App() {
   return (
     <div className="App">
       <Canvas />
-      <Button />
+      {/* <Button />  */}
     </div>
   );
 }
