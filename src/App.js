@@ -11,13 +11,15 @@ function Canvas() {
   const canvasRef = React.createRef();
 
   function getContext() {
+    //console.log(canvasRef.current);  //<canvas ... />が返ってくる
     return canvasRef.current.getContext('2d');
   }
 
   function startDrawing(x, y) {
     setDrawing(true);
     const ctx = getContext();
-    ctx.moveTo(x, y);
+    ctx.strokeRect(x, y, 10, 10);
+    //ctx.moveTo(x, y);
   }
 
   function draw(x, y) {
@@ -25,16 +27,19 @@ function Canvas() {
       return;
     }
     const ctx = getContext();
-    ctx.lineTo(x, y);
-    ctx.stroke();
+    //ctx.lineTo(x, y);
+    //ctx.stroke();
   }
 
   function endDrawing() {
+    const ctx = getContext();
+    ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
     setDrawing(false);
   }
 
   return (
     <canvas
+      id="canvas"
       ref={canvasRef}
       width="500px"
       height="500px"
